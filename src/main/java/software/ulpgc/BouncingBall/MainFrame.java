@@ -1,14 +1,16 @@
 package software.ulpgc.BouncingBall;
 
 import software.ulpgc.BouncingBall.Control.Command;
-import software.ulpgc.BouncingBall.View.Menu;
+import software.ulpgc.BouncingBall.View.SwingMenu;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class MainFrame extends JFrame {
     private final HashMap<String, Command> commands;
+    private SwingMenu menu;
 
     public MainFrame() throws HeadlessException {
         this.commands = new HashMap<>();
@@ -28,8 +30,14 @@ public class MainFrame extends JFrame {
     }
 
     private JPanel getMenu() {
-        Menu menu = new Menu();
-        menu.addField("Balls number", 1);
+        SwingMenu menu = new SwingMenu();
+        menu.addBall();
+        JButton createButton = new JButton("Create");
+        createButton.addActionListener(
+                e -> this.commands.get("create").execute(menu.getBalls()));
+        menu.addButton(createButton);
+
+        this.menu = menu;
         return menu;
     }
 }
