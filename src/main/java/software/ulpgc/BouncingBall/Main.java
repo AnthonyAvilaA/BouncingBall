@@ -11,10 +11,10 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        MainFrame mainframe = new MainFrame();
         ContentDisplay display = new ContentDisplay();
+        MainFrame mainframe = new MainFrame(display);
         ContentPresenter contentPresenter = new ContentPresenter(display, List.of(), new Circle());
-        mainframe.addCommand("Start", new StartCommand(contentPresenter));
+        mainframe.addCommand("start", new StartCommand(contentPresenter));
         mainframe.setVisible(true);
     }
 }

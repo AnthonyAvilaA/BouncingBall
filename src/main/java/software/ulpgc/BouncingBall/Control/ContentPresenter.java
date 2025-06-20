@@ -27,23 +27,26 @@ public class ContentPresenter {
         initializeSchedule();
 
         Runnable update = () -> {
+            this.contentDisplay.clear();
             this.ballList = getNewBallPosition();
-            displayBalls(ballList);
+            displayBalls(this.ballList);
             startTime = System.nanoTime();
         };
 
         int period = 1000 / 60;
         scheduler.scheduleAtFixedRate(update, 0, period, TimeUnit.MILLISECONDS);
+
     }
 
     private void displayBalls(List<Ball> ballList) {
+        this.contentDisplay.clear();
         ballList.forEach(this.contentDisplay::display);
     }
 
     private List<Ball> getNewBallPosition() {
         List<Ball> newBallList = new ArrayList<>(this.ballList.size());
         List<Ball> checkCollisionBallsList = new ArrayList<>(List.copyOf(this.ballList));
-        while (!ballList.isEmpty()) {
+        while (!checkCollisionBallsList.isEmpty()) {
             Ball currentBall = checkCollisionBallsList.removeFirst();
 
             for (Ball otherBall : checkCollisionBallsList) {
@@ -61,18 +64,29 @@ public class ContentPresenter {
     }
 
     private Ball updateBall(Ball ball) {
+        System.out.println("old position: " + ball.position());
         BallCircleCollisionResolver collisionResolver = new BallCircleCollisionResolver(ball, this.circle);
         Ball resultBall = collisionResolver.getNewBall();
-        double deltaTime = System.nanoTime() - startTime;
-        Vector2D velocity = ball.acceleration().productByScalar(deltaTime);
-        Vector2D position = ball.position().addition(velocity.productByScalar(deltaTime));
+
+        double deltaTime = (System.nanoTime() - startTime) / 1_000_000_000.0; // Seconds
+
+        Vector2D newVelocity = resultBall.velocity().addition(
+                resultBall.acceleration().productByScalar(deltaTime)
+        );
+
+        Vector2D newPosition = resultBall.position().addition(
+                newVelocity.productByScalar(deltaTime)
+        );
+
+        System.out.println("new position: " + newPosition);
+
         return new Ball(
-                position,
-                velocity,
-                ball.acceleration(),
-                ball.restitution(),
-                ball.radius(),
-                ball.mass()
+                newPosition,
+                newVelocity,
+                resultBall.acceleration(), // Keep acceleration unchanged (or modify if needed)
+                resultBall.restitution(),
+                resultBall.radius(),
+                resultBall.mass()
         );
     }
 

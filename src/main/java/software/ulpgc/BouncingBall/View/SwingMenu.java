@@ -18,6 +18,7 @@ public class SwingMenu extends JPanel {
 
         this.add(ballsPanel);
         this.add(buttonPanel);
+        System.out.println("Menu size: " + this.getSize());
     }
 
     public void addBall() {

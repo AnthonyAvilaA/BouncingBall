@@ -17,11 +17,7 @@ public record Vector2D(double x, double y) {
         return this.x * otherVector.x() + this.y * otherVector.y();
     }
 
-    public Vector2D multiplicationComponentByComponent(Vector2D otherVector) {
-        return new Vector2D(this.x * otherVector.x(), this.y * otherVector.y());
-    }
-
-    public Vector2D subtraction(Vector2D subtrahend) {
+    public Vector2D subtract(Vector2D subtrahend) {
         return new Vector2D(this.x - subtrahend.x(), this.y - subtrahend.y());
     }
 
@@ -35,5 +31,13 @@ public record Vector2D(double x, double y) {
 
     public Double squaredModule() {
         return this.x * this.x + this.y * this.y;
+    }
+
+    public Vector2D normalize() {
+        double magnitude = Math.sqrt(this.squaredModule());
+        if (magnitude == 0) {
+            return new Vector2D(0, 0); // Avoid division by zero
+        }
+        return this.divisionByScalar(magnitude);
     }
 }

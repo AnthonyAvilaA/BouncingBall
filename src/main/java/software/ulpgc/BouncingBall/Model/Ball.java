@@ -1,5 +1,7 @@
 package software.ulpgc.BouncingBall.Model;
 
+import java.awt.*;
+
 public record Ball (
         Vector2D position,
         Vector2D velocity,
@@ -10,11 +12,11 @@ public record Ball (
 
     public Ball() {
         this(
-                new Vector2D(1,1),
                 new Vector2D(0,0),
                 new Vector2D(0,0),
+                new Vector2D(0,9.81*1.5),
                 0.5f,
-                5,
+                10,
                 10);
     }
 

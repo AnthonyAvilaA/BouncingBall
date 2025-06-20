@@ -1,7 +1,5 @@
 package software.ulpgc.BouncingBall.Model;
 
-import java.util.List;
-
 public class BallBallCollisionResolver {
     private final boolean isColliding;
     private final Ball ball1;
@@ -12,7 +10,7 @@ public class BallBallCollisionResolver {
         this.ball1 = ball1;
         this.ball2 = ball2;
 
-        Vector2D positionDifference = ball1.position().subtraction(ball2.position());
+        Vector2D positionDifference = ball1.position().subtract(ball2.position());
         double distance = positionDifference.squaredModule();
 
         this.isColliding = checkCollision(distance);
@@ -31,7 +29,7 @@ public class BallBallCollisionResolver {
 
     private void getNewBalls(Vector2D positionDifference, double distance) {
         Vector2D normal = positionDifference.divisionByScalar(distance);
-        Vector2D relativeVel = ball1.velocity().subtraction(ball2.velocity());
+        Vector2D relativeVel = ball1.velocity().subtract(ball2.velocity());
         double velocityAlongNormal = relativeVel.dotProduct(normal);
 
         if (velocityAlongNormal > 0) {

@@ -10,6 +10,10 @@ public class ContentDisplay extends JPanel implements BallDisplay {
 
     private Ball currentBall;
 
+    public ContentDisplay() {
+        this.setBackground(Color.WHITE);
+    }
+
     @Override
     public void display(Ball ball) {
         currentBall = ball;
@@ -24,8 +28,9 @@ public class ContentDisplay extends JPanel implements BallDisplay {
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-        g.setColor(Color.black);
-        drawCircle(g);
+        if (this.currentBall != null) {
+            drawCircle(g);
+        }
         revalidate();
     }
 
@@ -33,8 +38,11 @@ public class ContentDisplay extends JPanel implements BallDisplay {
         Vector2D position = this.currentBall.position();
         int radius = this.currentBall.radius();
 
-        g.fillOval((int) position.x() - radius,
-                (int) position.y() - radius,
+        Dimension screenSize = this.getScreenSize();
+        Vector2D center = new Vector2D(screenSize.width, screenSize.height).divisionByScalar(2);
+
+        g.fillOval((int) position.x() - radius + (int) center.x(),
+                (int) position.y() - radius + (int) center.y(),
                 radius * 2,
                 radius * 2
         );
