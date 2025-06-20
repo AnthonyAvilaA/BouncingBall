@@ -33,6 +33,12 @@ public record Vector2D(double x, double y) {
         return this.x * this.x + this.y * this.y;
     }
 
+
+    public Double module() {
+        return  Math.sqrt(this.x * this.x + this.y * this.y);
+    }
+
+
     public Vector2D normalize() {
         double magnitude = Math.sqrt(this.squaredModule());
         if (magnitude == 0) {

@@ -8,14 +8,14 @@ public record Ball (
         Vector2D acceleration,
         float restitution,
         int radius,
-        int mass) {
+        int mass) implements CircularDisplayableFigure {
 
     public Ball() {
         this(
+                new Vector2D(15,0),
                 new Vector2D(0,0),
-                new Vector2D(0,0),
-                new Vector2D(0,9.81*1.5),
-                0.5f,
+                new Vector2D(0,9.81*10),
+                0.35f,
                 10,
                 10);
     }

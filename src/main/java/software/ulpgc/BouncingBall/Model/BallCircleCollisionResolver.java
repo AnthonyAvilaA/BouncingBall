@@ -38,16 +38,23 @@ public class BallCircleCollisionResolver {
         }
 
         // 3. Limit restitution effects
-        double restitution = Math.min(0.8, Math.max(0.3, ball.restitution()));
+        double restitution = ball.restitution();
 
         // 4. Calculate bounce with strict damping
         double normalVelocity = ball.velocity().dotProduct(normal);
-        Vector2D newVelocity = ball.velocity()
-                .subtract(normal.productByScalar((1 + restitution) * normalVelocity))
-                .productByScalar(0.7); // Strong damping
+        Vector2D vNormal = normal.productByScalar(-(restitution) * normalVelocity);
+        Vector2D vTangent = ball.velocity().subtract(normal.productByScalar(normalVelocity));
+        Vector2D newVelocity = vTangent.addition(vNormal);
+
+        if (newVelocity.module() < 0.1) {
+            newVelocity = new Vector2D(0, 0);
+        }
 
         // 5. Conservative position correction
         double penetration = ball.radius() + circle.radius() - distance;
+
+        if (penetration < 0.01) penetration = 0;
+
         double maxFix = 5.0; // Very strict limit
         penetration = Math.max(-maxFix, Math.min(maxFix, penetration));
         Vector2D newPosition = ball.position().addition(normal.productByScalar(penetration));
@@ -59,19 +66,34 @@ public class BallCircleCollisionResolver {
             newVelocity = new Vector2D(0, 0);
         }
 
+        if (Math.abs(newVelocity.x()) < 1e-3) newVelocity = new Vector2D(0, newVelocity.y());
+        if (Math.abs(newVelocity.y()) < 1e-3) newVelocity = new Vector2D(newVelocity.x(), 0);
+
+        if (!isValidPosition(newPosition) || isOutsideCircle(newPosition)) {
+            newPosition = newPosition.normalize().productByScalar(circle.radius() - ball.radius());
+        }
+
+        if (isOutsideCircle(newPosition)) {
+            newPosition = newPosition.normalize().productByScalar(circle.radius() - ball.radius());
+        }
+
         System.out.printf(
                 "Collision: dist=%.2f | vel=%s | norm=%s | pen=%.2f%n",
-                distance, ball.velocity(), normal, penetration
+                distance, newVelocity, normal, penetration
         );
 
         return new Ball(
                 newPosition,
                 newVelocity,
                 ball.acceleration(),
-                (float) restitution,
+                ball.restitution(),
                 ball.radius(),
                 ball.mass()
         );
+    }
+
+    private boolean isOutsideCircle(Vector2D position) {
+        return position.squaredModule() > Math.pow(circle.radius() - ball.radius(), 2);
     }
 
     private boolean isValidPosition(Vector2D pos) {

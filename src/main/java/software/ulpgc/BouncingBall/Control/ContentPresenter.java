@@ -4,6 +4,7 @@ import software.ulpgc.BouncingBall.Model.*;
 import software.ulpgc.BouncingBall.View.ContentDisplay;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -29,18 +30,16 @@ public class ContentPresenter {
         Runnable update = () -> {
             this.contentDisplay.clear();
             this.ballList = getNewBallPosition();
-            displayBalls(this.ballList);
+            List<CircularDisplayableFigure> displayList = new ArrayList<>(ballList.size()+1);
+            displayList.addAll(this.ballList);
+            displayList.add(this.circle);
+            this.contentDisplay.display(displayList);
             startTime = System.nanoTime();
         };
 
         int period = 1000 / 60;
         scheduler.scheduleAtFixedRate(update, 0, period, TimeUnit.MILLISECONDS);
 
-    }
-
-    private void displayBalls(List<Ball> ballList) {
-        this.contentDisplay.clear();
-        ballList.forEach(this.contentDisplay::display);
     }
 
     private List<Ball> getNewBallPosition() {
@@ -64,7 +63,6 @@ public class ContentPresenter {
     }
 
     private Ball updateBall(Ball ball) {
-        System.out.println("old position: " + ball.position());
         BallCircleCollisionResolver collisionResolver = new BallCircleCollisionResolver(ball, this.circle);
         Ball resultBall = collisionResolver.getNewBall();
 
@@ -77,8 +75,6 @@ public class ContentPresenter {
         Vector2D newPosition = resultBall.position().addition(
                 newVelocity.productByScalar(deltaTime)
         );
-
-        System.out.println("new position: " + newPosition);
 
         return new Ball(
                 newPosition,
