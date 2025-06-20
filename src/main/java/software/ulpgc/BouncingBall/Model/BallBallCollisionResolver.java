@@ -1,5 +1,7 @@
 package software.ulpgc.BouncingBall.Model;
 
+import java.util.Arrays;
+
 public class BallBallCollisionResolver {
     private final boolean isColliding;
     private final Ball ball1;
@@ -11,7 +13,7 @@ public class BallBallCollisionResolver {
         this.ball2 = ball2;
 
         Vector2D positionDifference = ball1.position().subtract(ball2.position());
-        double distance = positionDifference.squaredModule();
+        double distance = positionDifference.module();
 
         this.isColliding = checkCollision(distance);
         if (isColliding) {
@@ -23,40 +25,79 @@ public class BallBallCollisionResolver {
     }
 
     private Boolean checkCollision(double distance) {
-        int radiusSum = ball1.radius() + ball2.radius();
-       return distance <= (radiusSum * radiusSum);
+       return distance <= ball1.radius() + ball2.radius();
     }
 
     private void getNewBalls(Vector2D positionDifference, double distance) {
-        Vector2D normal = positionDifference.divisionByScalar(distance);
+        System.out.println("Collision!");
+        if (distance < 0.0001) {  // Small threshold to avoid division by zero
+            // Separate balls slightly to avoid NaN
+            Vector2D slightOffset = new Vector2D(0.1, 0.1);
+            newBalls[0] = new Ball(
+                    ball1.position().addition(slightOffset),
+                    ball1.velocity(),
+                    ball1.acceleration(),
+                    ball1.restitution(),
+                    ball1.radius(),
+                    ball1.mass()
+            );
+            newBalls[1] = new Ball(
+                    ball2.position().subtract(slightOffset),
+                    ball2.velocity(),
+                    ball2.acceleration(),
+                    ball2.restitution(),
+                    ball2.radius(),
+                    ball2.mass()
+            );
+            return;
+        }
+
+        // 3. Normal vector calculation with validation
+        Vector2D normal;
+        try {
+            normal = positionDifference.divisionByScalar(distance);
+        } catch (ArithmeticException e) {
+            normal = new Vector2D(1, 0);  // Fallback normal
+        }
+
+        // 4. Relative velocity calculation
         Vector2D relativeVel = ball1.velocity().subtract(ball2.velocity());
         double velocityAlongNormal = relativeVel.dotProduct(normal);
 
+        // 5. Early exit if moving apart
         if (velocityAlongNormal > 0) {
-            // if balls are moving away
             newBalls[0] = ball1;
             newBalls[1] = ball2;
             return;
         }
 
-        // restitution is the bounding coefficient
-        // if the balls has different values of it, then the value is used is close to the min
-        double combinedRestitution = Math.min(ball1.restitution(), ball2.restitution());
-        // A better approach would be the squared root, up to you to uncomment this line
-        // double combinedRestitution = Math.sqrt(ball1.restitution()*ball1.restitution());
+        // 6. Impulse calculation with validation
+        double combinedRestitution = Math.sqrt(ball1.restitution() * ball2.restitution());
+        double impulseScalar = -(1 + combinedRestitution) * velocityAlongNormal;
+        impulseScalar /= ((double) 1 /ball1.mass() + (double) 1 /ball2.mass());
 
-        double impulseMagnitude = -(1 + combinedRestitution) * velocityAlongNormal;
-        impulseMagnitude /= (double) 1 / ball1.mass() + (double) 1 / ball2.mass();
+        Vector2D impulse = normal.productByScalar(impulseScalar);
 
-        Vector2D impulse = normal.productByScalar(impulseMagnitude);
+        // 7. Position correction with limits
+        double overlap = (ball1.radius() + ball2.radius()) - distance;
+        if (overlap < 0.01) overlap = 0;
 
-        // if balls have been overlapped (optional)
-        double overlap = ball1.radius() + ball2.radius() - distance;
-        double correctionPercent = 0.5;
+        double correctionPercent = 0.1;
+        Vector2D correction = normal.productByScalar(overlap * correctionPercent);
+
+        // 8. Create new balls with validation
+        Vector2D newPos1 = ball1.position().addition(correction);
+        Vector2D newPos2 = ball2.position().subtract(correction);
+
+        // Validate positions
+        /*
+        if (Double.isNaN(newPos1.x())) newPos1 = ball1.position();
+        if (Double.isNaN(newPos2.x())) newPos2 = ball2.position();
+        */
 
         newBalls[0] = new Ball(
-                normal.productByScalar(overlap * correctionPercent),
-                impulse.divisionByScalar(ball1.mass()),
+                newPos1,
+                ball1.velocity().addition(impulse.divisionByScalar(ball1.mass())),
                 ball1.acceleration(),
                 ball1.restitution(),
                 ball1.radius(),
@@ -64,21 +105,24 @@ public class BallBallCollisionResolver {
         );
 
         newBalls[1] = new Ball(
-                normal.productByScalar(overlap * correctionPercent),
-                impulse.divisionByScalar(ball2.mass()),
+                newPos2,
+                ball2.velocity().subtract(impulse.divisionByScalar(ball2.mass())),
                 ball2.acceleration(),
                 ball2.restitution(),
                 ball2.radius(),
                 ball2.mass()
         );
 
+        System.out.println("balls: " + Arrays.toString(this.newBalls));
     }
+
+
 
     public boolean isColliding() {
         return this.isColliding;
     }
 
-    public Ball[] getOriginalBalls() throws Exception {
+    public Ball[] getOriginalBalls() {
         Ball[] result = new Ball[2];
         result[0] = ball1;
         result[1] = ball2;

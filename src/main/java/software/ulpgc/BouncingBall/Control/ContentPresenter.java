@@ -5,6 +5,7 @@ import software.ulpgc.BouncingBall.View.ContentDisplay;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -14,10 +15,11 @@ public class ContentPresenter {
     private final ContentDisplay contentDisplay;
     private ScheduledExecutorService scheduler;
     private List<Ball> ballList;
+    private final List<CircularDisplayableFigure> displayList = new LinkedList<>();
     private final Circle circle;
     private double startTime;
 
-    public ContentPresenter(ContentDisplay contentDisplay, List<Ball> ballList, Circle circle) {
+    public ContentPresenter(ContentDisplay contentDisplay, Circle circle) {
         this.contentDisplay = contentDisplay;
         this.circle = circle;
         startTime = System.nanoTime();
@@ -28,12 +30,15 @@ public class ContentPresenter {
         initializeSchedule();
 
         Runnable update = () -> {
-            this.contentDisplay.clear();
+
             this.ballList = getNewBallPosition();
-            List<CircularDisplayableFigure> displayList = new ArrayList<>(ballList.size()+1);
-            displayList.addAll(this.ballList);
-            displayList.add(this.circle);
-            this.contentDisplay.display(displayList);
+
+            this.displayList.clear();
+            this.displayList.addAll(this.ballList);
+            System.out.println(this.displayList);
+            this.displayList.add(this.circle);
+
+            this.contentDisplay.display(this.displayList);
             startTime = System.nanoTime();
         };
 
@@ -44,20 +49,21 @@ public class ContentPresenter {
 
     private List<Ball> getNewBallPosition() {
         List<Ball> newBallList = new ArrayList<>(this.ballList.size());
-        List<Ball> checkCollisionBallsList = new ArrayList<>(List.copyOf(this.ballList));
-        while (!checkCollisionBallsList.isEmpty()) {
-            Ball currentBall = checkCollisionBallsList.removeFirst();
+        for (Ball currentBall: this.ballList){
+            boolean collided = false;
 
-            for (Ball otherBall : checkCollisionBallsList) {
+            for (Ball otherBall : this.ballList) {
+                if (currentBall.equals(otherBall)) continue;
                 BallBallCollisionResolver collisionResolver = new BallBallCollisionResolver(currentBall, otherBall);
                 if (collisionResolver.isColliding()) {
-                    checkCollisionBallsList.remove(collisionResolver.newBalls()[1]);
-                    newBallList.add(updateBall(collisionResolver.newBalls()[1]));
-                    newBallList.add(updateBall(currentBall));
+                    //checkCollisionBallsList.remove(collisionResolver.getOriginalBalls()[1]);
+                    //newBallList.add(updateBall(collisionResolver.newBalls()[1]));
+                    newBallList.add(updateBall(collisionResolver.newBalls()[0]));
+                    collided = true;
                     break;
                 }
             }
-            newBallList.add(updateBall(currentBall));
+            if (!collided) newBallList.add(updateBall(currentBall));
         }
         return newBallList;
     }

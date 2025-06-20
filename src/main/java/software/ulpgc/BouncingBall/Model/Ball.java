@@ -15,11 +15,11 @@ public record Ball (
                 new Vector2D(15,0),
                 new Vector2D(0,0),
                 new Vector2D(0,9.81*10),
-                0.35f,
+                1f,
                 10,
                 10);
     }
-
+    /*
     @Override
     public String toString() {
         return "Ball{" +
@@ -30,6 +30,14 @@ public record Ball (
                 ", radius=" + radius +
                 ", mass=" + mass +
                 '}';
+    }
+    */
+
+    @Override
+    public String toString() {
+        return "Ball{" +
+                "Position= " + position +
+                "}";
     }
 }
 

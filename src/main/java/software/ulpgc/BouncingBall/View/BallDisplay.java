@@ -9,7 +9,6 @@ import java.util.List;
 
 public interface BallDisplay {
     void display(List<CircularDisplayableFigure> objectsToDisplay);
-    void clear();
 
     Dimension getScreenSize();
 }

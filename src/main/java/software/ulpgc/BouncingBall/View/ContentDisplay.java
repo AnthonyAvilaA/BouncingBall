@@ -24,13 +24,9 @@ public class ContentDisplay extends JPanel implements BallDisplay {
     }
 
     @Override
-    public void clear() {
-        removeAll();
-    }
-
-    @Override
     public void paint(Graphics g) {
         super.paint(g);
+        this.removeAll();
         this.objectsToDisplay.forEach(o -> drawBall(g, o));
         revalidate();
     }

@@ -11,17 +11,16 @@ import java.util.List;
 public class SwingMenu extends JPanel {
     private final List<SwingBallField> ballFieldList = new LinkedList<>();
     private final JPanel ballsPanel = new JPanel();
-    private final JPanel buttonPanel = new JPanel();
+    private final JPanel topPanel = new JPanel();
 
     public SwingMenu() {
-        this.setLayout(new FlowLayout());
+        this.setLayout(new BorderLayout());
 
-        this.add(ballsPanel);
-        this.add(buttonPanel);
-        System.out.println("Menu size: " + this.getSize());
+        this.add(topPanel, BorderLayout.NORTH);
+        this.add(ballsPanel, BorderLayout.CENTER);
     }
 
-    public void addBall() {
+    public void addBallField() {
         SwingBallField ballField = new SwingBallField();
         ballField.setRemoveButton(getBallDisplayRemoveButton(ballField));
         this.ballFieldList.add(ballField);
@@ -52,6 +51,6 @@ public class SwingMenu extends JPanel {
     }
 
     public void addButton(JButton button) {
-        this.buttonPanel.add(button);
+        this.topPanel.add(button);
     }
 }

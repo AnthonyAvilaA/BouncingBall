@@ -77,11 +77,6 @@ public class BallCircleCollisionResolver {
             newPosition = newPosition.normalize().productByScalar(circle.radius() - ball.radius());
         }
 
-        System.out.printf(
-                "Collision: dist=%.2f | vel=%s | norm=%s | pen=%.2f%n",
-                distance, newVelocity, normal, penetration
-        );
-
         return new Ball(
                 newPosition,
                 newVelocity,

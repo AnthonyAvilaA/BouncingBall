@@ -31,13 +31,24 @@ public class MainFrame extends JFrame {
 
     private JPanel getMenu() {
         SwingMenu menu = new SwingMenu();
-        menu.addBall();
+        menu.addBallField();
+        JButton addButton = new JButton("add");
+        addButton.setBackground(Color.green);
+        addButton.addActionListener(
+                e -> this.commands.get("add").execute(null));
+        menu.addButton(addButton);
+
         JButton createButton = new JButton("Create");
+        createButton.setBackground(Color.yellow);
         createButton.addActionListener(
                 e -> this.commands.get("start").execute(menu.getBalls()));
         menu.addButton(createButton);
 
         this.menu = menu;
         return menu;
+    }
+
+    public void addBall() {
+        this.menu.addBallField();
     }
 }
