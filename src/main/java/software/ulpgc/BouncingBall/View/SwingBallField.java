@@ -39,10 +39,17 @@ public class SwingBallField extends JPanel {
     }
 
     private JPanel getField(String name, String value1, String value2) {
-        JPanel panel = getField(name+"X", value1);
-        JTextField textField = new JTextField(value2);
-        panel.add(name+"Y", textField);
-        this.fields.put(name+"Y", textField);
+        JPanel panel = new JPanel();
+        panel.add(new JLabel(name));
+
+        JTextField textField1 = new JTextField(value1);
+        panel.add(name+"X", textField1);
+        this.fields.put(name+"X", textField1);
+
+        JTextField textField2 = new JTextField(value2);
+        panel.add(name+"Y", textField2);
+        this.fields.put(name+"Y", textField2);
+
         return panel;
     }
 
