@@ -14,9 +14,11 @@ public class SwingMenu extends JPanel {
     private final List<SwingBallField> ballFieldList = new LinkedList<>();
     private final JPanel ballsPanel = new JPanel();
     private final JPanel topPanel = new JPanel();
+
     private final JTextField speedPanel;
     private final JTextField circleRadiusPanel;
     private final Button hide;
+    private final JTextField fpsPanel;
 
 
     public SwingMenu() {
@@ -24,8 +26,9 @@ public class SwingMenu extends JPanel {
 
         this.ballsPanel.setLayout(new BoxLayout(this.ballsPanel, BoxLayout.Y_AXIS));
 
-        this.add(topPanel, BorderLayout.NORTH);
-        this.add(ballsPanel, BorderLayout.CENTER);
+        topPanel.add(new JLabel("fps:"));
+        this.fpsPanel = new JTextField("60", 5);
+        topPanel.add(this.fpsPanel);
 
         topPanel.add(new JLabel("Speed:"));
         this.speedPanel = new JTextField("1.0", 5);
@@ -48,6 +51,8 @@ public class SwingMenu extends JPanel {
         });
         topPanel.add(this.hide);
 
+        this.add(topPanel, BorderLayout.NORTH);
+        this.add(ballsPanel, BorderLayout.CENTER);
     }
 
     public void addBallField() {
@@ -89,11 +94,17 @@ public class SwingMenu extends JPanel {
 
     public float getSpeed() {
         try {
-            System.out.println("Speed: " + this.speedPanel.getText());
             return Float.parseFloat(this.speedPanel.getText());
         } catch (NumberFormatException e) {
-            this.speedPanel.setText("pepe");
             return 1.0f; // Default speed if parsing fails
+        }
+    }
+
+    public int getFps() {
+        try {
+            return Integer.parseInt(this.fpsPanel.getText());
+        } catch (NumberFormatException e) {
+            return 60; // Default speed if parsing fails
         }
     }
 

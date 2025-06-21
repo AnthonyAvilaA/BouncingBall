@@ -14,12 +14,13 @@ import java.util.concurrent.TimeUnit;
 public class ContentPresenter {
     private final ContentDisplay contentDisplay;
     private ScheduledExecutorService scheduler;
-    private List<Ball> ballList;
     private final List<CircularDisplayableFigure> displayList = new LinkedList<>();
-    private Circle circle;
+    private List<Ball> ballList;
     private double startTime;
     private final MainFrame mainframe;
+    private Circle circle;
     private float speed = 1.0f;
+    private int fps = 60;
 
     public ContentPresenter(MainFrame mainframe, ContentDisplay contentDisplay, Circle circle) {
         this.contentDisplay = contentDisplay;
@@ -32,6 +33,7 @@ public class ContentPresenter {
         this.ballList = ballList;
         this.circle = mainframe.getCircle();
         this.speed = this.mainframe.getSpeed();
+        this.fps = this.mainframe.getFps();
         initializeSchedule();
 
         Runnable update = () -> {
@@ -46,7 +48,7 @@ public class ContentPresenter {
             startTime = System.nanoTime();
         };
 
-        int period = 1000 / 60;
+        int period = 1000 / this.fps;
         scheduler.scheduleAtFixedRate(update, 0, period, TimeUnit.MILLISECONDS);
 
     }

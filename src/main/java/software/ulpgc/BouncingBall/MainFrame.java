@@ -60,4 +60,6 @@ public class MainFrame extends JFrame {
     public Circle getCircle() {
         return this.menu.getCircle();
     }
+
+    public int getFps() { return this.menu.getFps(); }
 }
