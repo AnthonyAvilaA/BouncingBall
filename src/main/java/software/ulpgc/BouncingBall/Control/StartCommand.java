@@ -13,6 +13,9 @@ public class StartCommand implements Command {
 
     @Override
     public void execute(Object object) {
+        if (!(object instanceof List<?>)) {
+            throw new IllegalArgumentException("Expected a List of Ball objects");
+        }
         presenter.scheduleTask((List<Ball>) object);
     }
 }

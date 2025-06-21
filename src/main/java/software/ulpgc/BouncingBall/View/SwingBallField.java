@@ -23,6 +23,7 @@ public class SwingBallField extends JPanel {
         float defaultRestitution = defaultBall.restitution();
         int defaultMass = defaultBall.mass();
         int defaultRadius = defaultBall.radius();
+        String defaultColor = defaultBall.color();
 
         this.add(getField("position", String.valueOf(defaultPosition.x()), String.valueOf(defaultPosition.y())));
         this.add(getField("velocity", String.valueOf(defaultVelocity.x()), String.valueOf(defaultVelocity.y())));
@@ -30,6 +31,7 @@ public class SwingBallField extends JPanel {
         this.add(getField("restitution", String.valueOf(defaultRestitution)));
         this.add(getField("mass", String.valueOf(defaultMass)));
         this.add(getField("radius", String.valueOf(defaultRadius)));
+        this.add(getField("color", defaultColor));
     }
 
     public void setRemoveButton(JButton button) {
@@ -62,6 +64,7 @@ public class SwingBallField extends JPanel {
         float restitution = Float.parseFloat(this.fields.get("restitution").getText());
         int radius = Integer.parseInt(this.fields.get("radius").getText());
         int mass = Integer.parseInt(this.fields.get("mass").getText());
+        String color = this.fields.get("color").getText();
 
         return new Ball(
                 position,
@@ -69,7 +72,8 @@ public class SwingBallField extends JPanel {
                 acceleration,
                 restitution,
                 radius,
-                mass
+                mass,
+                color
         );
     }
 

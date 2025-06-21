@@ -1,6 +1,7 @@
 package software.ulpgc.BouncingBall;
 
 import software.ulpgc.BouncingBall.Control.Command;
+import software.ulpgc.BouncingBall.Model.Circle;
 import software.ulpgc.BouncingBall.View.ContentDisplay;
 import software.ulpgc.BouncingBall.View.SwingMenu;
 
@@ -35,13 +36,13 @@ public class MainFrame extends JFrame {
         JButton addButton = new JButton("add");
         addButton.setBackground(Color.green);
         addButton.addActionListener(
-                e -> this.commands.get("add").execute(null));
+                _ -> this.commands.get("add").execute(null));
         menu.addButton(addButton);
 
         JButton createButton = new JButton("Create");
         createButton.setBackground(Color.yellow);
         createButton.addActionListener(
-                e -> this.commands.get("start").execute(menu.getBalls()));
+                _ -> this.commands.get("start").execute(menu.getBalls()));
         menu.addButton(createButton);
 
         this.menu = menu;
@@ -50,5 +51,13 @@ public class MainFrame extends JFrame {
 
     public void addBall() {
         this.menu.addBallField();
+    }
+
+    public float getSpeed() {
+        return this.menu.getSpeed();
+    }
+
+    public Circle getCircle() {
+        return this.menu.getCircle();
     }
 }

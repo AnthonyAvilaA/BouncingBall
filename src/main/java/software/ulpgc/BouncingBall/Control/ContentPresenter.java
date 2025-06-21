@@ -1,10 +1,10 @@
 package software.ulpgc.BouncingBall.Control;
 
+import software.ulpgc.BouncingBall.MainFrame;
 import software.ulpgc.BouncingBall.Model.*;
 import software.ulpgc.BouncingBall.View.ContentDisplay;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -16,17 +16,22 @@ public class ContentPresenter {
     private ScheduledExecutorService scheduler;
     private List<Ball> ballList;
     private final List<CircularDisplayableFigure> displayList = new LinkedList<>();
-    private final Circle circle;
+    private Circle circle;
     private double startTime;
+    private final MainFrame mainframe;
+    private float speed = 1.0f;
 
-    public ContentPresenter(ContentDisplay contentDisplay, Circle circle) {
+    public ContentPresenter(MainFrame mainframe, ContentDisplay contentDisplay, Circle circle) {
         this.contentDisplay = contentDisplay;
         this.circle = circle;
         startTime = System.nanoTime();
+        this.mainframe = mainframe;
     }
 
     public void scheduleTask(List<Ball> ballList) {
         this.ballList = ballList;
+        this.circle = mainframe.getCircle();
+        this.speed = this.mainframe.getSpeed();
         initializeSchedule();
 
         Runnable update = () -> {
@@ -35,7 +40,6 @@ public class ContentPresenter {
 
             this.displayList.clear();
             this.displayList.addAll(this.ballList);
-            System.out.println(this.displayList);
             this.displayList.add(this.circle);
 
             this.contentDisplay.display(this.displayList);
@@ -49,6 +53,9 @@ public class ContentPresenter {
 
     private List<Ball> getNewBallPosition() {
         List<Ball> newBallList = new ArrayList<>(this.ballList.size());
+
+        // TODO : improve performance by avoiding redoing all collisions
+
         for (Ball currentBall: this.ballList){
             boolean collided = false;
 
@@ -56,8 +63,6 @@ public class ContentPresenter {
                 if (currentBall.equals(otherBall)) continue;
                 BallBallCollisionResolver collisionResolver = new BallBallCollisionResolver(currentBall, otherBall);
                 if (collisionResolver.isColliding()) {
-                    //checkCollisionBallsList.remove(collisionResolver.getOriginalBalls()[1]);
-                    //newBallList.add(updateBall(collisionResolver.newBalls()[1]));
                     newBallList.add(updateBall(collisionResolver.newBalls()[0]));
                     collided = true;
                     break;
@@ -72,7 +77,7 @@ public class ContentPresenter {
         BallCircleCollisionResolver collisionResolver = new BallCircleCollisionResolver(ball, this.circle);
         Ball resultBall = collisionResolver.getNewBall();
 
-        double deltaTime = (System.nanoTime() - startTime) / 1_000_000_000.0; // Seconds
+        double deltaTime = (System.nanoTime() - startTime) / 1_000_000_000.0 * this.speed; // Seconds
 
         Vector2D newVelocity = resultBall.velocity().addition(
                 resultBall.acceleration().productByScalar(deltaTime)
@@ -88,7 +93,8 @@ public class ContentPresenter {
                 resultBall.acceleration(), // Keep acceleration unchanged (or modify if needed)
                 resultBall.restitution(),
                 resultBall.radius(),
-                resultBall.mass()
+                resultBall.mass(),
+                resultBall.color()
         );
     }
 

@@ -27,7 +27,9 @@ public class ContentDisplay extends JPanel implements BallDisplay {
     public void paint(Graphics g) {
         super.paint(g);
         this.removeAll();
-        this.objectsToDisplay.forEach(o -> drawBall(g, o));
+        try {
+            this.objectsToDisplay.forEach(o -> drawBall(g, o));
+        } catch (Exception ignored) {}
         revalidate();
     }
 
@@ -39,11 +41,13 @@ public class ContentDisplay extends JPanel implements BallDisplay {
         Vector2D center = new Vector2D(screenSize.width, screenSize.height).divisionByScalar(2);
 
         if (objectToDisplay instanceof Ball) {
+            g.setColor(Color.decode("#" +   ((Ball) objectToDisplay).color()));
             g.fillOval((int) position.x() - radius + (int) center.x(),
                     (int) position.y() - radius + (int) center.y(),
                     radius * 2,
                     radius * 2
             );
+            g.setColor(Color.BLACK);
         } else {
             g.drawOval((int) position.x() - radius + (int) center.x(),
                     (int) position.y() - radius + (int) center.y(),

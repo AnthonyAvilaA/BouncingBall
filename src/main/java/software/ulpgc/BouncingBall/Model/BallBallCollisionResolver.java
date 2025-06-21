@@ -1,6 +1,5 @@
 package software.ulpgc.BouncingBall.Model;
 
-import java.util.Arrays;
 
 public class BallBallCollisionResolver {
     private final boolean isColliding;
@@ -29,7 +28,6 @@ public class BallBallCollisionResolver {
     }
 
     private void getNewBalls(Vector2D positionDifference, double distance) {
-        System.out.println("Collision!");
         if (distance < 0.0001) {  // Small threshold to avoid division by zero
             // Separate balls slightly to avoid NaN
             Vector2D slightOffset = new Vector2D(0.1, 0.1);
@@ -39,7 +37,8 @@ public class BallBallCollisionResolver {
                     ball1.acceleration(),
                     ball1.restitution(),
                     ball1.radius(),
-                    ball1.mass()
+                    ball1.mass(),
+                    ball1.color()
             );
             newBalls[1] = new Ball(
                     ball2.position().subtract(slightOffset),
@@ -47,7 +46,8 @@ public class BallBallCollisionResolver {
                     ball2.acceleration(),
                     ball2.restitution(),
                     ball2.radius(),
-                    ball2.mass()
+                    ball2.mass(),
+                    ball2.color()
             );
             return;
         }
@@ -89,11 +89,6 @@ public class BallBallCollisionResolver {
         Vector2D newPos1 = ball1.position().addition(correction);
         Vector2D newPos2 = ball2.position().subtract(correction);
 
-        // Validate positions
-        /*
-        if (Double.isNaN(newPos1.x())) newPos1 = ball1.position();
-        if (Double.isNaN(newPos2.x())) newPos2 = ball2.position();
-        */
 
         newBalls[0] = new Ball(
                 newPos1,
@@ -101,7 +96,8 @@ public class BallBallCollisionResolver {
                 ball1.acceleration(),
                 ball1.restitution(),
                 ball1.radius(),
-                ball1.mass()
+                ball1.mass(),
+                ball1.color()
         );
 
         newBalls[1] = new Ball(
@@ -110,10 +106,10 @@ public class BallBallCollisionResolver {
                 ball2.acceleration(),
                 ball2.restitution(),
                 ball2.radius(),
-                ball2.mass()
+                ball2.mass(),
+                ball2.color()
         );
 
-        System.out.println("balls: " + Arrays.toString(this.newBalls));
     }
 
 

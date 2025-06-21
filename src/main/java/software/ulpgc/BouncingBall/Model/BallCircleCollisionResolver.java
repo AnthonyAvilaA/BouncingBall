@@ -83,7 +83,8 @@ public class BallCircleCollisionResolver {
                 ball.acceleration(),
                 ball.restitution(),
                 ball.radius(),
-                ball.mass()
+                ball.mass(),
+                ball.color()
         );
     }
 
