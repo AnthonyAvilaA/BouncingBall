@@ -16,9 +16,10 @@
 - **acceleration**: 0 - 1000
 - **restitution**: 0 - 1 (0 = no bounce, 1 = perfect bounce)
 - **number of balls**: 1 - 20 (more can get out of the screen)
+- **fps**: 24-120 (consider that is also the update rate)
 
 **Consider that a positive Y acceleration will make the balls fall down, while a negative Y acceleration will make them go up.**
 
-![image](https://github.com/user-attachments/assets/ecb1603b-09a2-49e3-9cef-6fe6c2c928ec)
+![img.png](img.png)
 
-### Version 1.0
+### Version 1.1
