@@ -19,4 +19,6 @@
 
 **Consider that a positive Y acceleration will make the balls fall down, while a negative Y acceleration will make them go up.**
 
+![image](https://github.com/user-attachments/assets/ecb1603b-09a2-49e3-9cef-6fe6c2c928ec)
+
 ### Version 1.0
